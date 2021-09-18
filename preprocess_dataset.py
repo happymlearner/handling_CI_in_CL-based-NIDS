@@ -117,20 +117,7 @@ def main():
         print("target label is ",str(i))
         train_dict = df[df.iloc[:, -1] == i]
         np.save(str(i),train_dict)
-
-
-
-    # Encodes target label
-   # encoder = preprocessing.LabelEncoder()
-    #for c in df.columns:
-     #   if str(df[c].dtype) == 'object':
-      #      print("column name is ",c)
-       #     df[c] = encoder.fit_transform(df[c])
-
-    #with open('./data/ids_18.pth','wb') as f:
-     #   pickle.dump(df,f) 
-
-     
+   
     
 if __name__ == "__main__":
     main()
