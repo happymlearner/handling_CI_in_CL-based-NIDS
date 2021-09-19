@@ -348,81 +348,79 @@ for X,y,y_classname in tasks:
     #               MEMORY POPULATION USING CBRS
     #_______________________________________________________________________________#
     
-  if (loop == 1 and memory_y_name.shape[0]==memory_size and i+b>memory_y_name.shape[0]) or (loop != 1):
-    for j in range(len(ynamet)):
-      #if memory noot filled
-      if (memory_y_name.shape[0]<memory_size):
-        print(memory_X.shape,Xt[j].shape,Xt[j,:].shape)
-        Xtreshape = Xt[j].reshape(1,7,10,1)
-        ytnew = np.empty(1, dtype=object)
-        ytnew[0] = yt[j]
-        ynametnew = np.empty(1, dtype=object)
-        ynametnew[0] = ynamet[j]
-        print(ytnew, yt[j])
-        print(ynametnew, ynamet[j])
-        memory_X = np.concatenate((memory_X,Xtreshape), axis=0)
-        memory_y = np.concatenate((memory_y,ytnew), axis=0)
-        memory_y_name = np.concatenate((memory_y_name,ynametnew), axis=0)
-        local_count[ynamet[j]]+=1
-        print("class being added to memory not filled", ynamet[j])
-        print("================================")
-        print("memory.size",memory_y_name.shape[0])
-        print("================================")
+    if(loop == 1 and memory_y_name.shape[0]==memory_size and i+b>memory_y_name.shape[0]) or (loop != 1):
+      for j in range(len(ynamet)):
+        #if memory noot filled
+        if (memory_y_name.shape[0]<memory_size):
+          print(memory_X.shape,Xt[j].shape,Xt[j,:].shape)
+          Xtreshape = Xt[j].reshape(1,7,10,1)
+          ytnew = np.empty(1, dtype=object)
+          ytnew[0] = yt[j]
+          ynametnew = np.empty(1, dtype=object)
+          ynametnew[0] = ynamet[j]
+          print(ytnew, yt[j])
+          print(ynametnew, ynamet[j])
+          memory_X = np.concatenate((memory_X,Xtreshape), axis=0)
+          memory_y = np.concatenate((memory_y,ytnew), axis=0)
+          memory_y_name = np.concatenate((memory_y_name,ynametnew), axis=0)
+          local_count[ynamet[j]]+=1
+          print("class being added to memory not filled", ynamet[j])
+          print("================================")
+          print("memory.size",memory_y_name.shape[0])
+          print("================================")
 
       # If the current instance doesnt belong to a full class
-      elif ynamet[j] not in full:
-
-        #Find the "largest" classes in the current iteration of memory population
-        largest = set()
-        for class_ in local_count.keys():
-          if local_count[class_] == max(local_count.values()):
-            largest.add(class_)
-            full.add(class_)
+        elif ynamet[j] not in full:
+          #Find the "largest" classes in the current iteration of memory population
+          largest = set()
+          for class_ in local_count.keys():
+            if local_count[class_] == max(local_count.values()):
+              largest.add(class_)
+              full.add(class_)
           
         # We find the indices of the instances in memory buffer which are from one of the "largest" classes
         # and store these instances in an array "largest_members"
-        largest_members = []
-        for k in range(memory_size):
-          if memory_y_name[k] in largest:
-            largest_members.append(k)
+          largest_members = []
+          for k in range(memory_size):
+            if memory_y_name[k] in largest:
+              largest_members.append(k)
 
         # We randomly pick one of the "largest" class members (which we stored in largest_members)
-        rand = random.randint(0,len(largest_members)-1)
-        rand_largest = largest_members[rand]
+          rand = random.randint(0,len(largest_members)-1)
+          rand_largest = largest_members[rand]
 
         # Update local_count, which stores the counts of each class present in the memory buffer
-        local_count[memory_y_name[rand_largest]]-=1
-        local_count[ynamet[j]]+=1
+          local_count[memory_y_name[rand_largest]]-=1
+          local_count[ynamet[j]]+=1
 
         # Replace the "largest" class member we picked earlier with the current instance
-        memory_X[rand_largest] = Xt[j]
-        memory_y[rand_largest] = yt[j]
-        memory_y_name[rand_largest] = ynamet[j]
+          memory_X[rand_largest] = Xt[j]
+          memory_y[rand_largest] = yt[j]
+          memory_y_name[rand_largest] = ynamet[j]
 
       # If the current instance belongs to a full class
-      else:
-
-        threshold = local_count[ynamet[j]] / global_count[ynamet[j]]
-        u = random.uniform(0, 1)
-
-        if u <= threshold:
-          #We find the indices of the instances in memory which are from same class as current stream instance
-          same_class = []
-          for k in range(memory_size):            
-            if memory_y_name[k] == ynamet[j]:
-               same_class.append(k)
+        else:
+          threshold = local_count[ynamet[j]] / global_count[ynamet[j]]
+          u = random.uniform(0, 1)
+          
+          if u <= threshold:
+            #We find the indices of the instances in memory which are from same class as current stream instance
+            same_class = []
+            for k in range(memory_size):            
+              if memory_y_name[k] == ynamet[j]:
+                same_class.append(k)
 
           # We randomly pick one of the same class members (which we stored in same_class)
-          rand = random.randint(0,len(same_class)-1)
-          rand_same_class = same_class[rand]
+            rand = random.randint(0,len(same_class)-1)
+            rand_same_class = same_class[rand]
 
           # NOTE: We don't need to update local_count since we are replacing a member from the same class
           # as the current instance, so overall count for that class stays same
 
           # Replace the chosen member with current instance
-          memory_X[rand_same_class] = Xt[j]
-          memory_y[rand_same_class] = yt[j]
-          memory_y_name[rand_same_class] = ynamet[j]
+            memory_X[rand_same_class] = Xt[j]
+            memory_y[rand_same_class] = yt[j]
+            memory_y_name[rand_same_class] = ynamet[j]
 
     
   model_name = 'cbrs_binary2_benign1_adamax_train_loss' + str(loop)
