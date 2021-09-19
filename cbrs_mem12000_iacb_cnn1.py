@@ -11,34 +11,43 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_score, confusion_matrix, roc_curve, roc_auc_score
 from keras.preprocessing import image
-#import matplotlib.pyplot as plt
-#from PIL import Image as im
 from sklearn.preprocessing import MinMaxScaler
 scaler = MinMaxScaler()
+
+'''@@@@Variables and their signifance@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ MUST READ  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@variable name@@@@@significance@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@ local_count    @@ dictionary containing the count of # of instances per each class presented in the CBRS Memory
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@ global_count   @@ dictionary containing the count of # of instances per each class encountered so far in the stream
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@ classes_so_far @@ set contains the distinct classes seen so far in the stream
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@ nc             @@ number of the classes seen so far in the stream
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@ weights        @@ list containing the weigtht of the each sample presnet in the CBRS Memory 
+                        whose quantity is inverse proportion to local_count of resepctive class
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                        
+@@@@@  numbers      @@ contains indices of instances presenet in the CBRS Memory, those are being replayed (for Replay loss)
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+'''
 
 names = ['BENIGN', 'DoS Hulk', 'PortScan', 'DDoS', 'FTP-Patator', 'DoS slowloris', 'DoS Slowhttptest', 'SSH-Patator', 'Bot', 'Web Attack � Brute Force', 'DoS GoldenEye', 'Web Attack � XSS', 'Infiltration', 'Web Attack � Sql Injection', 'Heartbleed']
 
 arrs = dict()
+X_im = dict()
+y_im = dict()
+X_image = dict()
 for name in names:
   name1 = name+'.npy'
   data = np.load("./CICIDS2017_Class-wise-normalized_datasets/"+name1,allow_pickle=True) # loads the individual data for each class
   arrs[name] = data
-
-for i in names:
-  print(arrs[i].shape)
-  print(arrs[i][5][70])# printing random label
-
-X_im = dict()
-y_im = dict()
-for i,name in enumerate(names):
+  print(arrs[name].shape)
   arr = arrs[name]
   X_im[name] = arr[:,:-1] #copying the features
   print(X_im[name].shape)
   y_im[name] = arr[:,-1]  #copying the labels
   print(y_im[name].shape)
-
-X_image = dict()
-for i,name in enumerate(names):
   arr_X = X_im[name]
   data_image = []
   for j in range(arr_X.shape[0]):
@@ -47,12 +56,8 @@ for i,name in enumerate(names):
   X_image[name] = list_to_array #Copying the image representations of the class into the dictionary
   print(X_image[name].shape)
 
-train_set_x = dict()
-train_set_y = dict()
-test_set_x = dict()
-test_set_y = dict()
-val_set_x = dict()
-val_set_y = dict()
+
+train_set_x,train_set_y,test_set_x,test_set_y,val_set_x,val_set_y = dict(),dict(),dict(),dict(),dict(),dict()
 
 for i,name in enumerate(names):
   arr_x = X_image[name]
@@ -70,12 +75,6 @@ for i,name in enumerate(names):
   test_set_y[name] = arr_y[train_split:val_split]
   val_set_y[name] = arr_y[val_split:]
 
-'''
-#May be useful in future
-name_to_id = {'BENIGN':0, 'DoS Hulk':1, 'PortScan':2, 'DDoS':3, 'FTP-Patator':4, 'DoS slowloris':5, 'DoS Slowhttptest':6, 'SSH-Patator':7, 'Bot':8, 'Web Attack � Brute Force':9, 'DoS GoldenEye':10, 'Web Attack � XSS':11, 'Infiltration':12, 'Web Attack � Sql Injection':13, 'Heartbleed':14}
-id_to_name = {name_to_id[i]:i for i in names}
-print(id_to_name)
-'''
 
 for i,name in enumerate(names):
   X_temp, y_temp = test_set_x[name],test_set_y[name]
@@ -91,10 +90,7 @@ for i,name in enumerate(names):
 #print(X_test.shape, y_test.shape)
 
 y_test = y_test.ravel()#flattens 2d to 1d
-print(Counter(y_test))
-
 y_val = y_val.ravel()
-print(Counter(y_val))
 
 for i in range(y_test.shape[0]):
   # For 2-Class setting use the below 4 lines
@@ -104,8 +100,6 @@ for i in range(y_test.shape[0]):
     y_test[i] = 1
     
 y_test = y_test.astype(float)
-print(Counter(y_test))
-
 
 for i in range(y_val.shape[0]):
   # For 2-Class setting use the below code
@@ -115,8 +109,11 @@ for i in range(y_val.shape[0]):
     y_val[i] = 1
     
 y_val = y_val.astype(float)
-print(Counter(y_val))
 
+del arrs
+del X_im
+del y_im
+del X_image
 '''
 #These are the concerned task orders
 Benign in task1
@@ -225,9 +222,6 @@ X_val = X_val.astype(float)
 y_val = y_val.astype(float)
 val_dataset = tf.data.Dataset.from_tensor_slices((X_val, y_val))
 val_dataset = val_dataset.shuffle(buffer_size=1024).batch(batch_size)
-norm_list1 = []
-norm_list2 = []
-norm_list3 = []
 source_path_model = "./CodebaseAIMLSYS/CBRS/Mem12000/SimpleCNN/iacb/Benign1CNN/"
 source_path_results_file = "./CodebaseAIMLSYS/CBRS/Mem12000/SimpleCNN/iacb/results.txt"
 print(a)
@@ -235,13 +229,6 @@ print(a)
 # We loop in steps of b (batchsize) to simulate batch-wise reception of stream
 for X,y,y_classname in tasks:
 
-  p = np.array(model.layers[3].weights[0])
-  q = np.array(model.layers[4].weights[0])
-  r = np.array(model.layers[0].weights[0])
-  #Calculates norm for the layer weights
-  norm_list3.append(np.linalg.norm(p))
-  norm_list2.append(np.linalg.norm(q))
-  norm_list1.append(np.linalg.norm(r))
   loop+=1
   print("task number:",loop)
   task_size = X.shape[0]
@@ -251,10 +238,10 @@ for X,y,y_classname in tasks:
 
     Xt, yt, ynamet = X[i:i+b,:,:,:], y[i:i+b], y_classname[i:i+b]
 
-    print(local_count)
-    # global_count stores "class_name : no. of class_name instances in the stream so far"
+    print(local_count)# returns the count of classwise instance persent in the CBRS auxillary memory 
+    
     for j in range(len(ynamet)):
-      global_count[ynamet[j]]+=1
+      global_count[ynamet[j]]+=1# global_count stores "class_name : no. of class_name instances in the stream so far"
       if ynamet[j] not in classes_so_far:
         classes_so_far.add(ynamet[j])
         nc += 1  
@@ -268,11 +255,11 @@ for X,y,y_classname in tasks:
     total_weight = sum(weights)
     probas = [weight/total_weight for weight in weights] #translates class_weigths to their probabilities
 
-    numbers = np.random.choice(range(0,memory_y_name.shape[0]), b, replace=False, p=probas)
+    numbers = np.random.choice(range(0,memory_y_name.shape[0]), b, replace=False, p=probas) 
 
-    replay_Xt, replay_yt, replay_yname = np.zeros((b,Xt.shape[1],Xt.shape[2],Xt.shape[3])), np.zeros(b), []
+    replay_Xt, replay_yt, replay_yname = np.zeros((b,Xt.shape[1],Xt.shape[2],Xt.shape[3])), np.zeros(b), [] # Xt.shape[1] = 7, Xt.shape[2] = 10, Xt.shape[3] = 1
 
-    for ind,rand in enumerate(numbers):
+    for ind,rand in enumerate(numbers): #loading the samples from CBRS Memory which will replay later
       replay_Xt[ind], replay_yt[ind] = memory_X[rand], memory_y[rand] 
       replay_yname.append(memory_y_name[rand])
       
@@ -349,7 +336,7 @@ for X,y,y_classname in tasks:
             val_logits = model(x_batch_val, training=False)
             count+=1
             val_loss += loss_fn(y_batch_val, val_logits)
-            val_loss_value = loss_fn(y_batch_val, val_logits)
+            
 
             val_acc_metric.update_state(y_batch_val, val_logits)
         val_acc = val_acc_metric.result()
@@ -360,7 +347,7 @@ for X,y,y_classname in tasks:
     #               MEMORY POPULATION USING CBRS
     #_______________________________________________________________________________#
     
-  if (loop == 1 and memory_y_name.shape[0]<memory_size and i+b>memory_y_name.shape[0]) or (loop != 1):
+  if (loop == 1 and memory_y_name.shape[0]==memory_size and i+b>memory_y_name.shape[0]) or (loop != 1):
     for j in range(len(ynamet)):
       #if memory noot filled
       if (memory_y_name.shape[0]<memory_size):
@@ -420,7 +407,7 @@ for X,y,y_classname in tasks:
         if u <= threshold:
           #We find the indices of the instances in memory which are from same class as current stream instance
           same_class = []
-          for k in range(me):            
+          for k in range(memory_size):            
             if memory_y_name[k] == ynamet[j]:
                same_class.append(k)
 
@@ -456,18 +443,6 @@ for X,y,y_classname in tasks:
 
   model_name = 'cbrs_binary2_benign1_adamax_memoryyname' + str(loop)
   np.save(source_path_model+ model_name,memory_y_name)
-
-p = np.array(model.layers[3].weights[0])
-q = np.array(model.layers[4].weights[0])
-r = np.array(model.layers[0].weights[0])
-  
-norm_list3.append(np.linalg.norm(p))
-norm_list2.append(np.linalg.norm(q))
-norm_list1.append(np.linalg.norm(r))
-np.save(source_path_model+"norm_layer_3_task",norm_list3)
-np.save(source_path_model+"norm_layer_2_task",norm_list2)
-np.save(source_path_model+"norm_layer_1_task",norm_list1)
-
 
 print(X_test.shape)
 X_test = X_test.astype(float)
