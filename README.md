@@ -34,9 +34,10 @@ To execute different task order, assign the variable **task_order** to the one o
  - Ubuntu >= 18.04
  - Python >= 3.8 (https://www.python.org/downloads/)
  - Anaconda (https://docs.anaconda.com/anaconda/install/linux/) 
- - Pytorch (https://pytorch.org/), latest and stable build say 1.10, prefered to install with conda
- - Avalanche continual learning library (Prefered way to install - https://avalanche.continualai.org/getting-started/how-to-install#install-avalanche-with-anaconda)
+ - Tensorflow (https://www.tensorflow.org/), prefered to install with conda
 
+We also used **Google Colab** during code build 
+ 
 # Code execution
 
 To run the code smoothly, follow the below steps in the same order
@@ -49,7 +50,7 @@ To run the code smoothly, follow the below steps in the same order
 
 
 # Miscellaneous
-
+- Avalanche continual learning library (Prefered way to install - https://avalanche.continualai.org/getting-started/how-to-install#install-avalanche-with-anaconda)
 - Avalanche documentation - https://avalanche-api.continualai.org/en/latest/
 - Avalanche youtube channel - https://www.youtube.com/channel/UCD9_bqN3gX-TLxcr47vvMmA
 - Getting start with pytorch - https://pytorch.org/tutorials/
