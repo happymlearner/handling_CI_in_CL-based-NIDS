@@ -1,9 +1,9 @@
 # Handling Class Imbalance in Continual Learning based Network Intrusion Detection System
-We try handling infamous **class imbalance problem** frequently seen in intrusion detection datasets. Specifically, we study this problem under the application of **continual learning (CL)** to the intrusion detection. Under CL paradigm, the learning model will be more flexible to adapt to the newly seen attack pattern with minimal overhead.
+In this work, we try handling infamous **class imbalance problem** frequently seen in intrusion detection datasets. Specifically, we study this problem under the application of **continual learning (CL)** to the intrusion detection. Under CL paradigm, the learning model will be more flexible to adapt to the newly seen attack pattern with minimal overhead.
 
 # Proposed System Model
 
-![alt text](https://github.com/amalapuram/handling_CI_in_CL-based-NIDS/tree/main/figure/arch.png?raw=true)
+![ScreenShot](/figure/arch.png)
 
 # Datasets
 CICIDS 2017 - https://www.unb.ca/cic/datasets/ids-2017.html <br>
