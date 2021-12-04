@@ -7,7 +7,25 @@ In this work, we try handling infamous **class imbalance problem** frequently se
 
 # Datasets
 CICIDS 2017 - https://www.unb.ca/cic/datasets/ids-2017.html <br>
-CICIDS 2018 - https://registry.opendata.aws/cse-cic-ids2018
+<br>Dataset contains 8 csv files, input to the datapreprocessing code. They are
+- Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv
+- Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv
+- Friday-WorkingHours-Morning.pcap_ISCX.csv
+- Monday-WorkingHours.pcap_ISCX.csv
+- Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv
+- Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv
+- Tuesday-WorkingHours.pcap_ISCX.csv
+- Wednesday-workingHours.pcap_ISCX.csv
+
+# Different **Task Orders**
+In this work we formulated five different task orders. They are
+- Benign in task1 task_order
+- Benign in task2 task_order
+- Benign in task3 task_order
+- Benign in task4 task_order
+- Benign in task5 task_order
+
+To execute different task order, assign the variable **task_order** to the one of the above task order.
 
 
 
@@ -18,6 +36,17 @@ CICIDS 2018 - https://registry.opendata.aws/cse-cic-ids2018
  - Anaconda (https://docs.anaconda.com/anaconda/install/linux/) 
  - Pytorch (https://pytorch.org/), latest and stable build say 1.10, prefered to install with conda
  - Avalanche continual learning library (Prefered way to install - https://avalanche.continualai.org/getting-started/how-to-install#install-avalanche-with-anaconda)
+
+# Code execution
+
+To run the code smoothly, follow the below steps in the same order
+
+- Ensure the correct software setup installation
+- Download and place all the csv files in the **code** directory
+- Run preprocess_dataset_ids17.py
+- Now you can run any of mlp or cnn architecture based code files
+- To run for different task order, follow steps in **Different Task Orders** section
+
 
 # Miscellaneous
 
