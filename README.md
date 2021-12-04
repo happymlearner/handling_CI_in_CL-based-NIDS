@@ -3,11 +3,7 @@ We try handling infamous **class imbalance problem** frequently seen in intrusio
 
 # Proposed System Model
 
-<object data="http://yoursite.com/the.pdf" type="application/pdf" width="700px" height="700px">
-    <embed src="http://yoursite.com/the.pdf">
-        <p>This browser does not support PDFs. Please download the PDF to view it: <a href="http://yoursite.com/the.pdf">Download PDF</a>.</p>
-    </embed>
-</object>
+![alt text](https://github.com/amalapuram/handling_CI_in_CL-based-NIDS/tree/main/figure/arch.png?raw=true)
 
 # Datasets
 CICIDS 2017 - https://www.unb.ca/cic/datasets/ids-2017.html <br>
